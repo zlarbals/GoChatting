@@ -64,25 +64,34 @@ func retrieveRooms(w http.ResponseWriter,req *http.Request,ps httprouter.Params)
 	renderer.JSON(w,http.StatusOK,rooms)
 }
 
-func retrieveRoom(w http.ResponseWriter,req *http.Request,ps httprouter.Params){
-	session := mongoSession.Copy()
-	defer session.Close()
-
-	var room Room
-	err:=session.DB("test").C("rooms").FindId(bson.ObjectIdHex(ps.ByName("id"))).One(&room)
-	if err!=nil{
-		renderer.JSON(w,http.StatusInternalServerError,err)
-		return
-	}
-
-	renderer.JSON(w,http.StatusOK,room)
-}
+//func retrieveRoom(w http.ResponseWriter,req *http.Request,ps httprouter.Params){
+//	session := mongoSession.Copy()
+//	defer session.Close()
+//
+//	var room Room
+//	err:=session.DB("test").C("rooms").FindId(bson.ObjectIdHex(ps.ByName("id"))).One(&room)
+//	if err!=nil{
+//		renderer.JSON(w,http.StatusInternalServerError,err)
+//		return
+//	}
+//
+//	renderer.JSON(w,http.StatusOK,room)
+//}
 
 func deleteRoom(w http.ResponseWriter, req *http.Request,ps httprouter.Params){
 	session:=mongoSession.Copy()
 	defer session.Close()
 
-	err := session.DB("test").C("rooms").RemoveId(bson.ObjectIdHex(ps.ByName("id")))
+	r:=new(Room)
+	errs := binding.Bind(req,r)
+	if errs != nil{
+		return
+	}
+
+	//err := session.DB("test").C("rooms").RemoveId(bson.ObjectIdHex(ps.ByName("name")))
+
+	err := session.DB("test").C("rooms").Remove(bson.M{"name":r.Name})
+	//err := session.DB("test").C("rooms").Find("SELECT id from rooms where name=")
 	if err!=nil{
 		renderer.JSON(w,http.StatusInternalServerError,err)
 		return

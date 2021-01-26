@@ -22,7 +22,7 @@
 
     function enterRoom(roomId) {
         // 채팅방에 입장하면 "GET /rooms/:id/messages"를 호출해 메시지를 조회하고 화면에 보여줌
-        $.get("/rooms/" + roomId + "/messages", function(data) {
+        $.get("/rooms/" + roomId + "/messages", function (data) {
             $("#messages").empty();
             if (data != null) {
                 for (var i = data.length - 1; i >= 0; i--) {
@@ -36,7 +36,7 @@
             socket.close();
         }
         socket = new WebSocket(socketEndPoint + roomId);
-        socket.onmessage = function(e) {
+        socket.onmessage = function (e) {
             addMessage(JSON.parse(e.data));
         }
 
@@ -51,7 +51,7 @@
         );
         var msg = $("<div>").addClass("media-body").append(
             $("<h6>").text(message.user.name + " ").addClass("media-heading")
-            .append($("<small>").text(new Date(message.created_at).toLocaleString())),
+                .append($("<small>").text(new Date(message.created_at).toLocaleString())),
             $("<p>").text(message.content));
 
         $("#messages").append($("<div>").addClass("media").append(img, msg));
@@ -60,7 +60,7 @@
     // 소켓 연결이 완료되지 않으면 소켓 연결이 완료될 때까지 대기 후 callback 실행
     function waitForSocketConnection(socket, callback) {
         setTimeout(
-            function() {
+            function () {
                 if (socket.readyState === 1) {
                     if (callback != null) {
                         callback();
@@ -71,19 +71,19 @@
                     waitForSocketConnection(socket, callback);
                 }
 
-           }, 5); // 소켓 연결이 완료될 때까지 5밀리초 단위로 소켓 연결 상태 확인
+            }, 5); // 소켓 연결이 완료될 때까지 5밀리초 단위로 소켓 연결 상태 확인
     }
 
-    $(function() {
+    $(function () {
         var msgBox = $("#chatbox input#message");
         // "chatbox"를 submit하면 소켓을 통해 "chatbox"에 입력한 메시지 전송
-        $("#chatbox").submit(function() {
+        $("#chatbox").submit(function () {
             if (!msgBox.val()) return false;
             if (!socket) {
                 console.log("Error: There is no socket connection.");
                 return false;
             }
-            waitForSocketConnection(socket, function() {
+            waitForSocketConnection(socket, function () {
                 socket.send(JSON.stringify({
                     "room_id": currentRoomId,
                     "content": msgBox.val()

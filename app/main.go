@@ -1,7 +1,5 @@
 package main
 
-
-
 import (
 	"github.com/goincremental/negroni-sessions"
 	"github.com/goincremental/negroni-sessions/cookiestore"
@@ -45,8 +43,9 @@ func init() {
 
 func main() {
 
-	//TODO: rooms 삭제 및 logout ui에 추가.
-	//TODO: tmpl 파일을 html 파일로 수정.
+	//TODO: room 삭제 시 DB에 저장된 메시지도 같이 삭제.
+	//TODO: room 생성 시 room name 중복 불가 처리.
+	//TODO: logout 추가.
 	//TODO: auth.go  nextPageKey 사용 수정 필요.
 
 	//라우터 생성
@@ -70,7 +69,7 @@ func main() {
 
 	router.GET("/auth/:action/:provider", loginHandler)
 
-	router.POST("/rooms",createRoom)
+	router.POST("/rooms/create",createRoom)
 	router.GET("/rooms",retrieveRooms)
 
 	router.GET("/rooms/:id/messages",retrieveMessages)
@@ -83,6 +82,8 @@ func main() {
 		}
 		newClient(socket,ps.ByName("room_id"),GetCurrentUser(r))
 	})
+
+	router.POST("/rooms/delete",deleteRoom)
 
 	//negroni 미들웨어 생성
 	n := negroni.Classic()
