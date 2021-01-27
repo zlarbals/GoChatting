@@ -20,6 +20,7 @@ func init() {
 	//gomniauth 정보 세팅
 	gomniauth.SetSecurityKey(authSecurityKey)
 	gomniauth.WithProviders(
+		// 사용 시 clientId와 clientSecret 입력 필요.
 		google.New("", "", "http://127.0.0.1:3000/auth/callback/google"),
 	)
 }

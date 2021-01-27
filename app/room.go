@@ -83,18 +83,36 @@ func deleteRoom(w http.ResponseWriter, req *http.Request,ps httprouter.Params){
 	defer session.Close()
 
 	r:=new(Room)
+	//바인딩
 	errs := binding.Bind(req,r)
 	if errs != nil{
 		return
 	}
 
-	//err := session.DB("test").C("rooms").RemoveId(bson.ObjectIdHex(ps.ByName("name")))
+	//room 이름으로 데이터베이스에서 찾고 r에 해당 room 정보 저장.
+	err:=session.DB("test").C("rooms").Find(bson.M{"name":r.Name}).One(&r)
 
-	err := session.DB("test").C("rooms").Remove(bson.M{"name":r.Name})
-	//err := session.DB("test").C("rooms").Find("SELECT id from rooms where name=")
 	if err!=nil{
 		renderer.JSON(w,http.StatusInternalServerError,err)
 		return
 	}
+
+	//해당 room에 연결된 messages들 전부 삭제.
+	_,err = session.DB("test").C("messages").RemoveAll(bson.M{"room_id":r.ID})
+
+	if err!=nil{
+		renderer.JSON(w,http.StatusInternalServerError,err)
+		return
+	}
+
+	//마지막으로 room 삭제.
+	err = session.DB("test").C("rooms").RemoveId(r.ID)
+	//err := session.DB("test").C("rooms").Remove(bson.M{"name":r.Name})
+
+	if err!=nil{
+		renderer.JSON(w,http.StatusInternalServerError,err)
+		return
+	}
+
 	renderer.JSON(w,http.StatusNoContent,nil)
 }

@@ -43,7 +43,6 @@ func init() {
 
 func main() {
 
-	//TODO: room 삭제 시 DB에 저장된 메시지도 같이 삭제.
 	//TODO: room 생성 시 room name 중복 불가 처리.
 	//TODO: logout 추가.
 	//TODO: auth.go  nextPageKey 사용 수정 필요.
