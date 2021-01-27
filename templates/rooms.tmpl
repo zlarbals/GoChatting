@@ -61,7 +61,7 @@
                 function (data, status) {
                     var room = JSON.parse(data);
                     createRoomBox(room);
-                });
+                }).fail(function(){alert("Room name cannot be duplicated.\n or Internal server error.")});
 
             $("#rooms").empty();
 

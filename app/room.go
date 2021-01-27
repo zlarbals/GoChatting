@@ -29,10 +29,22 @@ func createRoom(w http.ResponseWriter, req *http.Request,ps httprouter.Params){
 	//몽고DB 세션을 닫는 코드를 defer로 등록
 	defer session.Close()
 
-	//몽고DB 아이디 생성
-	r.ID=bson.NewObjectId()
 	//room 정보 저장을 위한 몽고DB 컬렉션 객체 생성
 	c:=session.DB("test").C("rooms")
+
+	temp :=new(Room)
+	// 생성하려는 room name 존재하는지 확인.  중복 방지.
+	err := c.Find(bson.M{"name":r.Name}).One(&temp)
+
+	//존재할 경우 에러 발생.
+	if err==nil {
+		//오류 발생 시 500 에러 반환
+		renderer.JSON(w,http.StatusInternalServerError,err)
+		return
+	}
+
+	//몽고DB 아이디 생성
+	r.ID=bson.NewObjectId()
 
 	//rooms 컬렉션에 room 정보 정장
 	if err:=c.Insert(r); err!=nil{
