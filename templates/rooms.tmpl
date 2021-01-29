@@ -12,9 +12,11 @@
 <form class="input-group">
     <input id="delete-room-name" type="text" class="form-control" placeholder="삭제할 방 이름 입력">
     <span class="input-group-btn">
-        <button id="delete-room" class="btn btn-default" type="submit">방 삭제</button>
+        <button id="delete-room" class="btn btn-danger" type="submit">방 삭제</button>
     </span>
 </form>
+
+<button id="logout-btn" type="button" class="btn btn-primary">로그아웃</button>
 
 
 <script>
@@ -61,7 +63,7 @@
                 function (data, status) {
                     var room = JSON.parse(data);
                     createRoomBox(room);
-                }).fail(function(){alert("Room name cannot be duplicated.\n or Internal server error.")});
+                }).fail(function () { alert("Room name cannot be duplicated.\n or Internal server error.") });
 
             $("#rooms").empty();
 
@@ -93,6 +95,13 @@
                     createRoomBox(rooms[i]);
                 };
             })
+        });
+    });
+
+    $(document).ready(function () {
+        //로그아웃
+        $("#logout-btn").click(function () {
+            $(location).attr('href', '/logout')
         });
     });
 

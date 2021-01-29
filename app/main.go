@@ -43,7 +43,7 @@ func init() {
 
 func main() {
 
-	//TODO: logout 추가.
+	//TODO: 메시지 백업 기능 추가.
 	//TODO: auth.go  nextPageKey 사용 수정 필요.
 
 	//라우터 생성
