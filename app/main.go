@@ -43,7 +43,7 @@ func init() {
 
 func main() {
 
-	//TODO: 메시지 백업 기능 추가.
+	//TODO: 메시지 백업 기능 추가 완료. html 구현 필요.
 	//TODO: auth.go  nextPageKey 사용 수정 필요.
 
 	//라우터 생성
@@ -69,8 +69,11 @@ func main() {
 
 	router.POST("/rooms/create",createRoom)
 	router.GET("/rooms",retrieveRooms)
-
 	router.GET("/rooms/:id/messages",retrieveMessages)
+	router.GET("/rooms/:id/backup/:location",backUpMessages)
+	router.POST("/rooms/delete",deleteRoom)
+
+	router.GET("/backup/:id/messages/:email",backUpMessages)
 
 	router.GET("/ws/:room_id", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		socket, err := upgrader.Upgrade(w,r,nil)
@@ -81,13 +84,11 @@ func main() {
 		newClient(socket,ps.ByName("room_id"),GetCurrentUser(r))
 	})
 
-	router.POST("/rooms/delete",deleteRoom)
-
 	//negroni 미들웨어 생성
 	n := negroni.Classic()
 	store := cookiestore.New([]byte(sessionSecret))
 	n.Use(sessions.Sessions(sessionKey, store))
-	n.Use(LoginRequired("/login", "/auth"))
+	n.Use(LoginRequired("/login", "/auth","/backup"))
 
 	//negroni에 router를 핸들러로 등록
 	n.UseHandler(router)
