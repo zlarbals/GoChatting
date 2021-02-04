@@ -9,7 +9,7 @@ func sendEmail(fileLocation string, receiverEmail string) error {
 	m:=gomail.NewMessage()
 
 	//sender email 입력
-	m.SetHeader("From", "SenderEmail")
+	m.SetHeader("From", "SenderNaverEmail")
 
 	//receiver email
 	m.SetHeader("To",receiverEmail)
@@ -24,7 +24,7 @@ func sendEmail(fileLocation string, receiverEmail string) error {
 	m.Attach(fileLocation)
 
 	//네이버 id,password 입력 필수.
-	d:=gomail.NewDialer("smtp.naver.com",587,"UserNaverID","UserNaverPassword")
+	d:=gomail.NewDialer("smtp.naver.com",587,"NaverID","NaverPassword")
 
 	if err:=d.DialAndSend(m); err!=nil{
 		return fmt.Errorf("failed to send mail")
